@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { useOnClickOutside } from 'usehooks-ts';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import './styles.css';
 
 export default function SharedLayout() {
@@ -24,50 +24,81 @@ export default function SharedLayout() {
 
   return (
     <>
-      {activeGame ? (
-        <>
-          <div className='overlay' />
-          <div className='active-game'>
-            <div
-              className='inner'
-              ref={ref}
-              style={{ borderRadius: 12 }}
-            >
-              <div className='header'>
-                <img
-                  height={56}
-                  width={56}
-                  alt='Game'
-                  src={activeGame.image}
-                  style={{ borderRadius: 12 }}
-                />
-                <div className='header-inner'>
-                  <div className='content-wrapper'>
-                    <h2 className='game-title'>
-                      {activeGame.title}
-                    </h2>
-                    <p className='game-description'>
-                      {activeGame.description}
-                    </p>
+      <AnimatePresence>
+        {activeGame ? (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className='overlay'
+            />
+            <div className='active-game'>
+              <motion.div
+                layoutId={`card-${activeGame.title}`}
+                className='inner'
+                style={{ borderRadius: 12 }}
+                ref={ref}
+              >
+                <div className='header'>
+                  <motion.img
+                    layoutId={`image-${activeGame.title}`}
+                    height={56}
+                    width={56}
+                    alt='Game'
+                    src={activeGame.image}
+                    style={{ borderRadius: 12 }}
+                  />
+                  <div className='header-inner'>
+                    <div className='content-wrapper'>
+                      <motion.h2
+                        layoutId={`title-${activeGame.title}`}
+                        className='game-title'
+                      >
+                        {activeGame.title}
+                      </motion.h2>
+                      <motion.p
+                        layoutId={`description-${activeGame.title}`}
+                        className='game-description'
+                      >
+                        {activeGame.description}
+                      </motion.p>
+                    </div>
+                    <motion.button
+                      layoutId={`button-${activeGame.title}`}
+                      className='button'
+                    >
+                      Get
+                    </motion.button>
                   </div>
-                  <button className='button'>Get</button>
                 </div>
-              </div>
-              <p className='long-description'>
-                {activeGame.longDescription}
-              </p>
+                <motion.p
+                  layout
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{
+                    opacity: 0,
+                    transition: { duration: 0.05 },
+                  }}
+                  className='long-description'
+                >
+                  {activeGame.longDescription}
+                </motion.p>
+              </motion.div>
             </div>
-          </div>
-        </>
-      ) : null}
+          </>
+        ) : null}
+      </AnimatePresence>
       <ul className='list'>
         {GAMES.map((game) => (
-          <li
+          <motion.li
+            layoutId={`card-${game.title}`}
             key={game.title}
             onClick={() => setActiveGame(game)}
             style={{ borderRadius: 8 }}
           >
-            <img
+            <motion.img
+              layoutId={`image-${game.title}`}
               height={56}
               width={56}
               alt='Game'
@@ -76,14 +107,27 @@ export default function SharedLayout() {
             />
             <div className='game-wrapper'>
               <div className='content-wrapper'>
-                <h2 className='game-title'>{game.title}</h2>
-                <p className='game-description'>
+                <motion.h2
+                  layoutId={`title-${game.title}`}
+                  className='game-title'
+                >
+                  {game.title}
+                </motion.h2>
+                <motion.p
+                  layoutId={`description-${game.title}`}
+                  className='game-description'
+                >
                   {game.description}
-                </p>
+                </motion.p>
               </div>
-              <button className='button'>Get</button>
+              <motion.button
+                layoutId={`button-${game.title}`}
+                className='button'
+              >
+                Get
+              </motion.button>
             </div>
-          </li>
+          </motion.li>
         ))}
       </ul>
     </>
